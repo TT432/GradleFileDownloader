@@ -1,0 +1,150 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gradle-file-downloader"
+version = "1.0.0"
+description = "从 Gradle/Maven 仓库下载依赖源码的工具，支持自动反编译"
+authors = [
+    {name = "Assistant", email = "assistant@example.com"}
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.7"
+keywords = ["gradle", "maven", "downloader", "decompiler", "java", "sources"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Archiving",
+    "Topic :: Utilities",
+]
+
+dependencies = [
+    "requests>=2.28.0",
+    "click>=8.0.0",
+    "tqdm>=4.64.0",
+    "lxml>=4.9.0",
+    "beautifulsoup4>=4.11.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=2.20.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/gradle-file-downloader"
+Repository = "https://github.com/yourusername/gradle-file-downloader.git"
+Issues = "https://github.com/yourusername/gradle-file-downloader/issues"
+Documentation = "https://github.com/yourusername/gradle-file-downloader#readme"
+
+[project.scripts]
+gradle-downloader = "gradle_downloader.cli:cli"
+gfd = "gradle_downloader.cli:cli"
+
+[project.gui-scripts]
+gradle-downloader-gui = "gradle_downloader.gui:launch_gui"
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=2.20.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gradle_downloader"]
+sources = ["src"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py37']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.7"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "tests/*",
+    "src/gradle_downloader/__init__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+] 

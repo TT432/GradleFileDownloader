@@ -8,6 +8,7 @@
 - 🌐 **多仓库支持**：默认支持 Maven Central、Apache Maven 等主流仓库，支持配置自定义仓库
 - 🔧 **仓库管理**：轻松添加、删除、切换仓库，支持指定特定仓库进行下载
 - 🖥️ **双界面模式**：提供命令行 (CLI) 和图形用户界面 (GUI)
+- 🤖 **MCP 集成**：支持 Model Context Protocol，可与 Claude Desktop、OpenAI API 等 AI 助手集成
 - 🎨 **可视化仓库管理**：GUI 提供直观的仓库管理界面，无需命令行操作
 - 🔧 **高级反编译**：使用 CFR 反编译器，自动处理依赖关系
 - 📦 **批量处理**：支持搜索、版本查询等实用功能
@@ -147,6 +148,47 @@ uv run gfd decompile ./mylib.jar -o ./decompiled
 # 启动图形界面
 uv run gradle-downloader gui
 ```
+
+#### MCP (Model Context Protocol) 支持
+
+工具支持 MCP 协议，可与 AI 助手（如 Claude Desktop）集成使用：
+
+```bash
+# 启动 MCP 服务器 (STDIO 模式，用于 Claude Desktop)
+uv run gfd mcp --stdio
+
+# 启动 MCP 服务器 (HTTP 模式)
+uv run gfd mcp --host 127.0.0.1 --port 8000
+```
+
+**Claude Desktop 集成**：
+
+1. 找到 Claude Desktop 配置文件：
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Linux: `~/.config/claude/claude_desktop_config.json`
+
+2. 添加以下配置：
+```json
+{
+  "mcpServers": {
+    "gradle-file-downloader": {
+      "command": "uv",
+      "args": ["run", "gfd", "mcp", "--stdio"],
+      "cwd": "/path/to/your/GradleFileDownloader"
+    }
+  }
+}
+```
+
+3. 重启 Claude Desktop，现在可以要求 AI 助手帮您下载依赖！
+
+**示例对话**：
+- "请帮我下载 Spring Boot 2.7.0 的源码"
+- "查找 Guava 的最新版本"
+- "添加一个新的仓库配置"
+
+详细信息请查看 [MCP_INTEGRATION.md](./MCP_INTEGRATION.md)。
 
 #### 仓库管理
 

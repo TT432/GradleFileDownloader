@@ -340,6 +340,43 @@ def reset():
         click.echo(click.style("✗ 重置配置失败", fg='red'), err=True)
         sys.exit(1)
 
+
+@cli.command()
+@click.option('--host', default='127.0.0.1', help='MCP 服务器绑定主机')
+@click.option('--port', default=8000, type=int, help='MCP 服务器绑定端口')
+@click.option('--stdio', is_flag=True, help='使用 STDIO 模式运行 MCP 服务器 (用于 Claude Desktop)')
+def mcp(host, port, stdio):
+    """启动 MCP (Model Context Protocol) 服务器
+    
+    这允许 AI 助手直接使用 Gradle File Downloader 工具。
+    使用 --stdio 模式与 Claude Desktop 集成，或使用 HTTP 模式与其他客户端集成。
+    
+    示例:
+        mcp --stdio                    # 用于 Claude Desktop
+        mcp --host 0.0.0.0 --port 8080 # HTTP 服务器模式
+    """
+    try:
+        from .mcp_server import mcp as mcp_server
+        
+        if stdio:
+            click.echo("正在启动 MCP 服务器 (STDIO 模式)...")
+            click.echo("此模式用于 Claude Desktop 集成。")
+            click.echo("服务器现在等待来自 Claude Desktop 的连接...\n")
+            mcp_server.run(transport="stdio")
+        else:
+            click.echo(f"正在启动 MCP 服务器: http://{host}:{port}")
+            click.echo("可用的工具将在服务器启动后显示。")
+            click.echo("按 Ctrl+C 停止服务器\n")
+            mcp_server.run(transport="streamable-http", host=host, port=port)
+    except ImportError as e:
+        click.echo(click.style(f"错误: 无法启动 MCP 服务器 - {e}", fg='red'), err=True)
+        click.echo("请确保安装了 fastmcp 依赖: pip install fastmcp")
+        sys.exit(1)
+    except Exception as e:
+        click.echo(click.style(f"MCP 服务器启动失败: {e}", fg='red'), err=True)
+        sys.exit(1)
+
+
 def main():
     """主入口函数"""
     cli() 
